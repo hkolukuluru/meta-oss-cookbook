@@ -18,6 +18,34 @@ browser microphone
 
 No LiveKit Cloud account or cloud inference service is used.
 
+## Models and artifacts
+
+The recipe does not store model files in Git. `make setup` downloads the exact
+files below, validates their sizes and SHA-256 hashes, and places them under
+ignored `.local/artifacts/` paths.
+
+| Stage | Model details | ExecuTorch implementation | Pinned Hugging Face downloads |
+|---|---|---|---|
+| STT | [NVIDIA Parakeet-TDT-0.6B-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) | [Parakeet export and runtime](https://github.com/pytorch/executorch/tree/20ad5ee43ff53804030899d621590af3daadda53/examples/models/parakeet) | [`model.pte`](https://huggingface.co/younghan-meta/Parakeet-TDT-ExecuTorch-MLX/blob/b1d26047ee8eae69272a268d5eb85c8bf2de9957/model.pte) and [`tokenizer.model`](https://huggingface.co/younghan-meta/Parakeet-TDT-ExecuTorch-MLX/blob/b1d26047ee8eae69272a268d5eb85c8bf2de9957/tokenizer.model) |
+| LLM | [Muse Glimmer 30B ExecuTorch PTE](https://huggingface.co/meta-models/Muse-Glimmer-30B-ExecuTorch-PTE), K-quant-17G, 128K text, dFlash Metal | [Muse Glimmer export, runtime, and server](https://github.com/pytorch/executorch/tree/20ad5ee43ff53804030899d621590af3daadda53/examples/models/muse-glimmer) | [Model PTE](https://huggingface.co/meta-models/Muse-Glimmer-30B-ExecuTorch-PTE/blob/fc6fa93cdefeddc93abd7abf883e99279af7ea51/muse-glimmer-k-quant-17G-128K-text-dflash-metal/muse-glimmer-k-quant-17G-128K-text-dflash-metal.pte) and [tokenizer bundle](https://huggingface.co/meta-models/Muse-Glimmer-30B-ExecuTorch-PTE/tree/fc6fa93cdefeddc93abd7abf883e99279af7ea51) |
+| TTS | [Supertone Supertonic-3](https://huggingface.co/Supertone/supertonic-3) with the F1 voice style | [Supertonic export and runtime](https://github.com/pytorch/executorch/tree/20ad5ee43ff53804030899d621590af3daadda53/examples/models/supertonic) | [`model.pte`](https://huggingface.co/younghan-meta/Supertonic-ExecuTorch-MLX/blob/fecf95fa31ab6b26262dae0414e657c8f6580427/model.pte), [runtime assets](https://huggingface.co/Supertone/supertonic-3/tree/3cadd1ee6394adea1bd021217a0e650ede09a323), and [`F1.json`](https://huggingface.co/Supertone/supertonic-3/blob/3cadd1ee6394adea1bd021217a0e650ede09a323/voice_styles/F1.json) |
+
+The [prebuilt macOS runtime bundle](https://huggingface.co/younghan-meta/Muse-Glimmer-Voice-Agent-ExecuTorch/blob/15200ebe3c37aeb4a6aec43021ceb6025f41f6a6/runtime-macos-arm64-executorch-20ad5ee.tar.gz)
+contains `parakeet_helper`, `muse_glimmer_worker`, `supertonic_runner`, and
+`mlx.metallib`. All three executables are built from the same pinned
+[ExecuTorch commit](https://github.com/pytorch/executorch/commit/20ad5ee43ff53804030899d621590af3daadda53).
+
+For the complete supply chain, see:
+
+- [`artifacts/macos-arm64.download.json`](artifacts/macos-arm64.download.json)
+  for each Hugging Face repository, immutable revision, and filename.
+- [`artifacts/macos-arm64.lock.json`](artifacts/macos-arm64.lock.json) for each
+  local destination, license, size, and SHA-256 hash.
+- [`stt.py`](packages/livekit-plugins-executorch/livekit/plugins/executorch/stt.py),
+  [`launch.py`](apps/muse-glimmer-server/launch.py), and
+  [`supertonic_tts.py`](packages/livekit-plugins-executorch/livekit/plugins/executorch/supertonic_tts.py)
+  for the recipe integration code.
+
 ## Recipe banner
 
 | | |
