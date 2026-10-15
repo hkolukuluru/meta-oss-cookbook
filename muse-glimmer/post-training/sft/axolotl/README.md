@@ -11,7 +11,7 @@ when adapters do not provide enough capacity.
 | Precision | bf16 compute; QLoRA loads the frozen base in 4-bit |
 | Default method | QLoRA |
 | Alternatives | bf16 LoRA with FSDP2; full-parameter bf16 with FSDP2 |
-| Trainer | [Axolotl 0.19.0][axolotl-release] |
+| Trainer | [Axolotl 0.19.0](https://github.com/axolotl-ai-cloud/axolotl/releases/tag/v0.19.0) |
 | Model | Muse Glimmer 30B at a pinned revision |
 | Hardware target | 8x H100, one node |
 | Hardware verified on | 8x H100 for all methods; QLoRA also on 1x H100 |
@@ -155,7 +155,7 @@ After the run, move the local W&B directory to a connected host and run
 
 ## Prepare the canonical single-image data
 
-The runnable configs use the `circuit` subset of [CoSyn-400K][cosyn] at
+The runnable configs use the `circuit` subset of [CoSyn-400K](https://huggingface.co/datasets/allenai/CoSyn-400K/tree/86e46e1fd5e754d056169f0fb38f06c6997ff7de) at
 revision `86e46e1fd5e754d056169f0fb38f06c6997ff7de`. The dataset card reports 10,470 training images and 128 validation images under
 the ODC-BY-1.0 license. Each circuit image has parallel question, explanation,
 and answer lists. The preparation script emits one conversation per question
@@ -246,7 +246,7 @@ Use text SFT for instruction following, domain language, and response structure:
 }
 ```
 
-The example source is [Tulu 3 SFT Personas][tulu] at revision
+The example source is [Tulu 3 SFT Personas](https://huggingface.co/datasets/allenai/tulu-3-sft-personas-instruction-following/tree/fe0c7d350c9b4542b8d829a6f1daa1c259f0ba0e) at revision
 `fe0c7d350c9b4542b8d829a6f1daa1c259f0ba0e`. Its card reports 29,980
 training rows, it uses this messages shape directly, and it is ODC-BY-1.0
 licensed.
@@ -307,7 +307,7 @@ Place every image inline and in semantic order before the associated question:
 }
 ```
 
-The example source is [Docmatix][docmatix], subset `zero-shot-exp`, at revision
+The example source is [Docmatix](https://huggingface.co/datasets/HuggingFaceM4/Docmatix/tree/0725b65616e0e5f6024be10e38ddf8d8c48664fd), subset `zero-shot-exp`, at revision
 `0725b65616e0e5f6024be10e38ddf8d8c48664fd`. Its card reports 1,700
 training and 200 test documents under the MIT license. The preparation script
 keeps documents with two to four pages, preserves page order, and records the
@@ -418,11 +418,11 @@ limit, and online W&B logging.
 
 | Dataset | Method | Validation loss, step 0 to final | Trainer runtime | Peak MiB/GPU | W&B |
 |---|---|---:|---:|---:|---|
-| CoSyn | QLoRA | 2.9434 to 0.8655 | 320.4 s | 27,011 | [o3disfur][wandb-quality-cosyn-qlora] |
-| CoSyn | bf16 LoRA FSDP2 | 2.8341 to 0.8968 | 651.1 s | 41,094 | [3y6r7c5h][wandb-quality-cosyn-lora] |
-| CoSyn | Full bf16 FSDP2 | 2.8341 to 0.8717 | 1,105 s | 97,340 | [hx05hx9u][wandb-quality-cosyn-full] |
-| Tulu | QLoRA | 1.1078 to 0.7973 | 327.2 s | 29,401 | [i8uuy1o0][wandb-quality-tulu] |
-| Docmatix | QLoRA | 1.0974 to 0.7187 | 80.81 s | 28,052 | [2w8rql9f][wandb-quality-docmatix] |
+| CoSyn | QLoRA | 2.9434 to 0.8655 | 320.4 s | 27,011 | [o3disfur](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/o3disfur) |
+| CoSyn | bf16 LoRA FSDP2 | 2.8341 to 0.8968 | 651.1 s | 41,094 | [3y6r7c5h](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/3y6r7c5h) |
+| CoSyn | Full bf16 FSDP2 | 2.8341 to 0.8717 | 1,105 s | 97,340 | [hx05hx9u](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/hx05hx9u) |
+| Tulu | QLoRA | 1.1078 to 0.7973 | 327.2 s | 29,401 | [i8uuy1o0](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/i8uuy1o0) |
+| Docmatix | QLoRA | 1.0974 to 0.7187 | 80.81 s | 28,052 | [2w8rql9f](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/2w8rql9f) |
 
 Peak memory is the maximum device use sampled by `nvidia-smi` every two seconds,
 including final save. Full FSDP2 reached 97,340 MiB while consolidating its final
@@ -445,11 +445,11 @@ and multi-page Docmatix inputs.
 
 ![QLoRA training loss across all datasets](assets/qlora-modalities/loss.png)
 
-![QLoRA validation loss across all datasets](assets/qlora-modalities/validation_loss.png)
+![QLoRA validation loss across all datasets](assets/qlora-modalities/qlora-validation_loss.png)
 
-![QLoRA accelerator memory across all datasets](assets/qlora-modalities/memory.png)
+![QLoRA accelerator memory across all datasets](assets/qlora-modalities/qlora-memory.png)
 
-![QLoRA training throughput across all datasets](assets/qlora-modalities/throughput.png)
+![QLoRA training throughput across all datasets](assets/qlora-modalities/qlora-throughput.png)
 
 #### Fixed held-out generation
 
@@ -486,10 +486,10 @@ was sampled with `nvidia-smi` every two seconds:
 
 | Method | GPUs | Peak MiB/GPU | Trainer runtime | W&B |
 |---|---:|---:|---:|---|
-| QLoRA | 1 | 26,995 | 25.44 s | [d4d13jz5][wandb-qlora-1] |
-| QLoRA DDP | 8 | 27,211 | 14.89 s | [j3scit5e][wandb-qlora-8] |
-| bf16 LoRA FSDP2 | 8 | 32,966 rank 0 | 30.68 s | [sa5zaed3][wandb-lora] |
-| Full FSDP2 | 8 | 57,608 rank 0 | 3 steps with resume | [train][wandb-full], [resume][wandb-full-resume] |
+| QLoRA | 1 | 26,995 | 25.44 s | [d4d13jz5](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/d4d13jz5) |
+| QLoRA DDP | 8 | 27,211 | 14.89 s | [j3scit5e](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/j3scit5e) |
+| bf16 LoRA FSDP2 | 8 | 32,966 rank 0 | 30.68 s | [sa5zaed3](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/sa5zaed3) |
+| Full FSDP2 | 8 | 57,608 rank 0 | 3 steps with resume | [train](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/ok8mjhbi), [resume](https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/c4rw5ynu) |
 
 The full smoke wrote a roughly 56 GB consolidated model plus a roughly 166 GB
 sharded training checkpoint. A resume from checkpoint 2 restored optimizer and
@@ -543,42 +543,8 @@ test.
 
 ## Next steps
 
-- Read [`../`](../) to compare SFT frameworks.
-- Read [`../../`](../../) to choose between SFT and RL.
-- Study Axolotl's upstream [Muse Glimmer QLoRA][upstream-text] and
-  [vision QLoRA][upstream-vision] configs.
-- Read the official [Muse Glimmer model guide][model-guide].
-
-[axolotl-release]:
-  https://github.com/axolotl-ai-cloud/axolotl/releases/tag/v0.19.0
-[cosyn]:
-  https://huggingface.co/datasets/allenai/CoSyn-400K/tree/86e46e1fd5e754d056169f0fb38f06c6997ff7de
-[docmatix]:
-  https://huggingface.co/datasets/HuggingFaceM4/Docmatix/tree/0725b65616e0e5f6024be10e38ddf8d8c48664fd
-[model-guide]: https://docs.axolotl.ai/docs/models/muse-glimmer.html
-[tulu]:
-  https://huggingface.co/datasets/allenai/tulu-3-sft-personas-instruction-following/tree/fe0c7d350c9b4542b8d829a6f1daa1c259f0ba0e
-[upstream-text]:
-  https://github.com/axolotl-ai-cloud/axolotl/blob/v0.19.0/examples/muse-glimmer/qlora.yaml
-[upstream-vision]:
-  https://github.com/axolotl-ai-cloud/axolotl/blob/v0.19.0/examples/muse-glimmer/qlora-vision.yaml
-[wandb-qlora-1]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/d4d13jz5
-[wandb-qlora-8]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/j3scit5e
-[wandb-lora]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/sa5zaed3
-[wandb-full]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/ok8mjhbi
-[wandb-full-resume]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft/runs/c4rw5ynu
-[wandb-quality-cosyn-qlora]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/o3disfur
-[wandb-quality-cosyn-lora]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/3y6r7c5h
-[wandb-quality-cosyn-full]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/hx05hx9u
-[wandb-quality-tulu]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/i8uuy1o0
-[wandb-quality-docmatix]:
-  https://wandb.ai/a-shamsoshoara-m/muse-glimmer-sft-quality/runs/2w8rql9f
+- Read the [SFT overview](../) to compare SFT frameworks.
+- Read the [post-training overview](../../) to choose between SFT and RL.
+- Study Axolotl's upstream [Muse Glimmer QLoRA](https://github.com/axolotl-ai-cloud/axolotl/blob/v0.19.0/examples/muse-glimmer/qlora.yaml) and
+  [vision QLoRA](https://github.com/axolotl-ai-cloud/axolotl/blob/v0.19.0/examples/muse-glimmer/qlora-vision.yaml) configs.
+- Read the official [Muse Glimmer model guide](https://docs.axolotl.ai/docs/models/muse-glimmer.html).
