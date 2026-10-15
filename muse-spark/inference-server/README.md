@@ -70,11 +70,9 @@ vllm serve meta-models/Muse-Spark-Open-816B-A42B-NVFP4 \
 
 ```bash
 # serve_config.yaml: see tensorrt-llm.md
-MODEL=meta-models/Muse-Spark-Open-816B-A42B-NVFP4   # or a local checkpoint path
-
-trtllm-serve ${MODEL} \
-    --host 0.0.0.0 --port 8000 \
+trtllm-serve meta-models/Muse-Spark-Open-816B-A42B-NVFP4 \
     --config serve_config.yaml \
+    --custom_tokenizer musespark_open \
     --tool_parser musespark \
     --reasoning_parser musespark
 ```

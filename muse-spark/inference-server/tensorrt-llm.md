@@ -35,16 +35,14 @@ You also need a complete Hugging Face-format Muse Spark Open checkpoint with its
 Muse Spark Open at TP4/EP4 fits on a single Blackwell 4-GPU node, so `trtllm-serve` launches directly (no multi-node launcher needed). Write the recommended settings (next section) to a YAML file and pass it with `--config`:
 
 ```bash
-MODEL=meta-models/Muse-Spark-Open-816B-A42B-NVFP4   # or a local checkpoint path
-
-trtllm-serve ${MODEL} \
-    --host 0.0.0.0 --port 8000 \
+trtllm-serve meta-models/Muse-Spark-Open-816B-A42B-NVFP4 \
     --config serve_config.yaml \
+    --custom_tokenizer musespark_open \
     --tool_parser musespark \
     --reasoning_parser musespark
 ```
 
-Pass `--tool_parser musespark` and `--reasoning_parser musespark` explicitly: they enable tool-call and reasoning-content extraction on `/v1/chat/completions`. The server is ready when the log shows `Application startup complete`; the first query may take longer due to warmup.
+Pass `--custom_tokenizer musespark_open`, `--tool_parser musespark`, and `--reasoning_parser musespark` explicitly; the two parsers enable tool-call and reasoning-content extraction on `/v1/chat/completions`. The server listens on `localhost:8000`. Add `--host 0.0.0.0 --port 8000` if it needs to be reachable from other hosts. The server is ready when the log shows `Application startup complete`; the first query may take longer due to warmup.
 
 ## Recommended settings
 

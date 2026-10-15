@@ -49,6 +49,7 @@ The Muse Spark Open launch ecosystem includes:
 - [Run inference](inference-server/README.md): Self-host with SGLang, vLLM, or another runtime.
 - [Hosted providers](hosted/README.md): Call the model through a provider's API.
 - [Post-training](post-training/README.md): Fine-tune the model with a framework or a hosted service.
+- [Recipes](recipes/README.md): End-to-end walkthroughs, such as serving the model on Mac Studio computers.
 
 ## Next steps
 
