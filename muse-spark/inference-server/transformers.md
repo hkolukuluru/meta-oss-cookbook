@@ -7,7 +7,7 @@ Muse Spark Open comes with a native Hugging Face Transformers implementation, so
 - [Transformers docs](https://hf.co/docs/transformers/main/en/model_doc/muse_spark). These are always the source of truth for using Muse Spark Open with Transformers.
 - [Hugging Face collection](https://huggingface.co/collections/meta-models/muse-spark-open)
 - [Hugging Face blog post on Muse Spark Open](https://hf.co/blog/meta-muse-spark-open)
-- [Post-train with TRL](https://github.com/huggingface/trl/tree/main/examples/sft_muse_spark)
+- [Post-train with TRL](https://github.com/huggingface/trl/tree/main/examples/sft_muse_spark_open)
 
 ## Install
 
