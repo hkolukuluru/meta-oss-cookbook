@@ -4,7 +4,7 @@
 
 ## Links
 
-- Recipe: [examples/sft_muse_spark](https://github.com/huggingface/trl/tree/main/examples/sft_muse_spark) in the TRL repository (training script and Slurm launcher).
+- Recipe: [examples/sft_muse_spark_open](https://github.com/huggingface/trl/tree/main/examples/sft_muse_spark_open) in the TRL repository (training script and Slurm launcher).
 - [SFTTrainer documentation](https://huggingface.co/docs/trl/sft_trainer)
 - [Distributing training](https://huggingface.co/docs/trl/distributing_training) and the [PEFT integration](https://huggingface.co/docs/trl/peft_integration)
 
@@ -91,7 +91,7 @@ srun torchrun \
     --nproc_per_node 8 \
     --rdzv_backend c10d \
     --rdzv_endpoint "$MASTER_IP:29700" \
-    sft_muse_spark.py
+    sft_muse_spark_open.py
 ```
 
 On 64 H100s this runs at 14.2 s per step with 131k tokens per step, using 40.2 GB per GPU. A checkpoint of the adapter (194 MB) is written every 50 steps.
