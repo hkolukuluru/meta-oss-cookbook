@@ -312,7 +312,7 @@ A longer context, a larger microbatch, or a bigger batch needs more GPUs.
 
 ## Next steps
 
-- [`../../../../agentic-fundamentals/`](../../../../agentic-fundamentals/) -- the tool-use loop
+- [Agentic fundamentals](../../../../agentic-fundamentals/) -- the tool-use loop
   and ATEM tool-call format this recipe trains against.
 - [TitanRL docs](https://github.com/pytorch/torchtitan/tree/main/torchtitan/rl)
   -- the framework: rollouters, environments, rubrics, and the async controller.
