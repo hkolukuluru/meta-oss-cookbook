@@ -5,6 +5,7 @@ Fine-tune Muse Spark Open with an open-source training framework on your own GPU
 | Option | Type | Methods |
 | --- | --- | --- |
 | [Miles](rl/miles/README.md) | Open-source framework | Reinforcement learning (RL) with Group Relative Policy Optimization (GRPO) on 64 GPUs, with SGLang rollouts |
+| [TorchTitan](rl/torchtitan/README.md) | Open-source framework | RL (GRPO with the DAPO loss) with pluggable tasks |
 | [NVIDIA NeMo AutoModel](#nvidia-nemo-automodel) | Open-source framework | Full-parameter supervised fine-tuning (SFT) and low-rank adaptation (LoRA) |
 | [NVIDIA Megatron Bridge](#nvidia-megatron-bridge) | Open-source framework | Megatron-based training, with Hugging Face checkpoint conversion |
 | [TRL](sft/trl/README.md) | Open-source framework | SFT with LoRA |
