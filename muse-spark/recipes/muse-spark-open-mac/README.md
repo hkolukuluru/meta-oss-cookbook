@@ -2,7 +2,7 @@
 
 |  |  |
 |---|---|
-| **Section** | [Run locally](https://dev.meta.ai/docs/cookbook#run-locally) |
+| **Section** | [Muse Spark Open](https://dev.meta.ai/docs/cookbook#muse-spark-open) |
 | **Time to complete** | ~4 hours |
 | **Model** | Muse Spark Open |
 | **Harness** | `mlx-lm` across Thunderbolt-linked Mac Studios |

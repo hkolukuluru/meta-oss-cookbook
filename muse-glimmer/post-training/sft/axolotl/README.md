@@ -445,11 +445,11 @@ and multi-page Docmatix inputs.
 
 ![QLoRA training loss across all datasets](assets/qlora-modalities/loss.png)
 
-![QLoRA validation loss across all datasets](assets/qlora-modalities/validation_loss.png)
+![QLoRA validation loss across all datasets](assets/qlora-modalities/qlora-validation_loss.png)
 
-![QLoRA accelerator memory across all datasets](assets/qlora-modalities/memory.png)
+![QLoRA accelerator memory across all datasets](assets/qlora-modalities/qlora-memory.png)
 
-![QLoRA training throughput across all datasets](assets/qlora-modalities/throughput.png)
+![QLoRA training throughput across all datasets](assets/qlora-modalities/qlora-throughput.png)
 
 #### Fixed held-out generation
 
