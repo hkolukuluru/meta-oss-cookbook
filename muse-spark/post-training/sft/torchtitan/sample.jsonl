@@ -1,0 +1,6 @@
+{"messages": [{"role": "user", "content": "What is 2+2?"}, {"role": "assistant", "content": "4"}]}
+{"messages": [{"role": "system", "content": "You are terse."}, {"role": "user", "content": "Name the capital of France."}, {"role": "assistant", "content": "Paris."}]}
+{"messages": [{"role": "user", "content": "What is 3+3?"}, {"role": "assistant", "content": "6"}, {"role": "user", "content": "And double that?"}, {"role": "assistant", "content": "12"}]}
+{"messages": [{"role": "user", "content": "Sort these names alphabetically: Bob, Alice, Carol."}, {"role": "assistant", "content": "Alice, Bob, Carol."}]}
+{"messages": [{"role": "system", "content": "Answer with a single sentence."}, {"role": "user", "content": "Why is the sky blue?"}, {"role": "assistant", "content": "Shorter wavelengths scatter more strongly in the atmosphere, so we see blue."}, {"role": "user", "content": "And at sunset?"}, {"role": "assistant", "content": "The light travels farther, so the blue scatters away and red dominates."}]}
+{"messages": [{"role": "user", "content": "Write a haiku about tensors."}, {"role": "assistant", "content": "Axes fold inward\nGradients trace the descent\nLoss settles to rest"}]}
