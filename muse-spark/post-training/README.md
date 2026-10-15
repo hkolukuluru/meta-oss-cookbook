@@ -13,7 +13,7 @@ Fine-tune Muse Spark Open with an open-source training framework on your own GPU
 
 ## NVIDIA NeMo AutoModel
 
-[NVIDIA NeMo AutoModel](https://github.com/NVIDIA-NeMo/Automodel) is a post-training library built on PyTorch DTensor that loads Hugging Face checkpoints directly, with no conversion. See the [Muse Spark Open guide in NeMo AutoModel](https://github.com/NVIDIA-NeMo/Automodel/blob/main/docs/model-coverage/vlm/muse/muse_spark_open.mdx) for setup and training recipes.
+[NVIDIA NeMo AutoModel](https://github.com/NVIDIA-NeMo/Automodel) is a post-training library built on PyTorch DTensor that loads Hugging Face checkpoints directly, with no conversion. See the [Muse Spark Open guide in NeMo AutoModel](https://github.com/NVIDIA-NeMo/Automodel/blob/main/docs/model-coverage/vlm/meta-models/muse_spark_open.mdx) for setup and training recipes.
 
 ## NVIDIA Megatron Bridge
 

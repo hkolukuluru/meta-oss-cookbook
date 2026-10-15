@@ -1,6 +1,6 @@
 # MLX
 
-Run Muse Spark Open on Apple silicon with MLX and the NVFP4 checkpoint. The NVFP4 weights need about 493 GB of memory before any inference overhead, so the model doesn't fit on one Mac. Serve it across two Mac Studio computers with M5 Ultra and 512 GB of unified memory each, or four with 256 GB each. Four Macs serve fastest.
+Run Muse Spark Open on Apple silicon with MLX and the NVFP4 checkpoint. The model doesn't fit in one Mac's memory, so serve it across two Mac Studio computers with M5 Ultra and 512 GB of unified memory each, or four with 256 GB each. Four Macs serve fastest.
 
 ## Links
 
@@ -36,7 +36,7 @@ ssh-copy-id mac-studio-2.local
 pip install -U mlx-lm
 ```
 
-Each Mac loads the model from its own disk, so each needs room for the NVFP4 download, about 537 GB.
+Each Mac loads the model from its own disk, so each needs disk space for the full NVFP4 checkpoint.
 
 ## Create the hostfile
 
