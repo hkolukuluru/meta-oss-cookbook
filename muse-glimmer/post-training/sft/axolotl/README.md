@@ -89,6 +89,11 @@ test against general image prompts.
 Run these commands from `muse-glimmer/post-training/sft/axolotl/`. Use a dedicated environment so the
 CUDA and compiled-extension pins do not leak into another project.
 
+FlashAttention needs a complete CUDA toolkit, not just `nvcc`: check for
+`cuda_runtime.h`, CCCL's `nv/target`, and `libcudart.so`. On smaller hosts,
+use `MAX_JOBS=4 NVCC_THREADS=2` to limit build parallelism; an H100-only
+build can also set `FLASH_ATTN_CUDA_ARCHS=90`.
+
 ```bash
 uv venv --python 3.12 .venv
 source .venv/bin/activate
@@ -190,6 +195,31 @@ For a quick pipeline check, cap each split rather than editing the output:
 python scripts/prepare_dataset.py cosyn-circuit \
   --max-examples-per-split 16 --output-root data/smoke
 ```
+
+The cap limits conversations in **each** output split, not source images or
+Hub downloads. For CoSyn, the script preserves the upstream splits, sorts
+source rows by stable ID, and emits their QA pairs in source order. It can
+stop partway through an image's QA list. A cap of 2,048 keeps all 821 available
+validation conversations; it does not create a 2,048/256 slice.
+
+For a bounded 2,048-train / 256-validation control, prepare twice and use the
+training file from the larger cap and validation file from the smaller cap:
+
+```bash
+export WORK="$HOME/glimmer-sft"
+for CAP in 2048 256; do
+  python scripts/prepare_dataset.py cosyn-circuit \
+    --max-examples-per-split "$CAP" \
+    --output-root "$WORK/datasets/cap-$CAP" \
+    --tokenizer-model meta-models/Muse-Glimmer-30B \
+    --tokenizer-revision a4e59da52a7bc87ae7251dd5545c0dd437c44b68 \
+    --max-tokens 4096
+done
+```
+
+Keep both manifests and image directories. The
+[bounded control command](#run-a-bounded-cosyn-control) uses these two files
+without changing the source splits or the shipped full-dataset configs.
 
 To exercise the pinned processor and enforce the 4,096-token limit without model
 weights, prepare a small separate preflight set:
@@ -332,8 +362,10 @@ hide a regression on ordinary vision prompts.
 ## Launch on one 8x H100 node
 
 Start with the bounded validation commands below. Each crosses two optimizer
-steps, skips the full validation set, and writes a checkpoint at step 2. The
-full-parameter smoke still needs about 222 GB for one sharded training
+steps and writes a checkpoint at step 2. In Axolotl 0.19.0, `--eval-strategy no`
+disables scheduled evaluation but can still run initial validation when a test
+dataset is supplied (`eval_on_start=True`). Include that cost in smoke timings.
+The full-parameter smoke still needs about 222 GB for one sharded training
 checkpoint plus its consolidated model.
 
 ```bash
@@ -410,6 +442,10 @@ The completed validation matrix is:
 
 ### Controlled quality runs
 
+The bounded CoSyn command below makes the slice and evaluation settings
+explicit. It documents a reproducible control, not a recovered copy of every
+historical run setting.
+
 These are bounded, one-epoch slice results, not production benchmarks. CoSyn and
 Tulu used 2,048 train and 256 validation examples, global batch 32, and 64
 optimizer steps. Docmatix used 256 train and 36 validation documents, global
@@ -435,6 +471,62 @@ evaluation summaries, plot inputs, and reproduction commands are in
 ![CoSyn accelerator memory](assets/cosyn-methods/memory.png)
 
 ![CoSyn training throughput](assets/cosyn-methods/throughput.png)
+
+#### Run a bounded CoSyn control
+
+After setup and a two-step smoke, use a fresh environment for this run. With
+`WORK` and the two capped preparations above, make a path-only copy of the
+QLoRA config and check the counts against its preparation manifests:
+
+```bash
+mkdir -p "$WORK/configs" "$WORK/notes" "$WORK/logs"
+git rev-parse HEAD > "$WORK/notes/cookbook-commit.txt"
+python - <<'PY'
+import hashlib
+import json
+import os
+from pathlib import Path
+
+import yaml
+
+work = Path(os.environ["WORK"]).resolve()
+config = yaml.safe_load(Path("configs/muse-glimmer-30b-qlora.yaml").read_text())
+for field, cap, split, count in (
+    ("datasets", 2048, "train", 2048),
+    ("test_datasets", 256, "validation", 256),
+):
+    directory = work / f"datasets/cap-{cap}/cosyn-circuit"
+    manifest = json.loads((directory / "manifest.json").read_text())
+    path = directory / f"{split}.jsonl"
+    stats = manifest["splits"][split]
+    if stats["examples"] != count:
+        raise ValueError(f"Unexpected {split} count")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != stats["jsonl_sha256"]:
+        raise ValueError(f"Changed {split} file")
+    config[field][0]["path"] = str(path)
+config["dataset_prepared_path"] = str(work / "datasets/cache/cosyn-qlora")
+config["output_dir"] = str(work / "checkpoints/cosyn-qlora")
+with (work / "configs/cosyn-qlora.yaml").open("x") as output:
+    yaml.safe_dump(config, output, sort_keys=False)
+PY
+
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
+  axolotl train "$WORK/configs/cosyn-qlora.yaml" \
+  --max-steps 64 --gradient-accumulation-steps 4 \
+  --eval-strategy steps --eval-steps 16 \
+  --save-strategy steps --save-steps 64 \
+  --launcher torchrun -- --nproc_per_node=8 --nnodes=1
+```
+
+For one H100, use `CUDA_VISIBLE_DEVICES=0`, `--nproc_per_node=1`, and
+`--gradient-accumulation-steps 32` to retain global batch 32. These overrides
+leave the shipped YAML's epoch default unchanged and produce loss validation
+at optimizer steps 0/16/32/48/64: Axolotl enables initial evaluation when
+`eval_steps` is set. Preserve the normalized config and both data manifests.
+The shipped warmup ratio peaks at step 7 here; the archived QLoRA history
+peaks at step 4, so this is not an exact historical schedule reproduction.
+Use [the fixed-ID evaluation](results/README.md#reproduce-held-out-generation)
+to compare the saved adapter with a precision-matched base.
 
 #### QLoRA across text, single-image, and multi-image data
 
