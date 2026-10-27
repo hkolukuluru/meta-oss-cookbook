@@ -475,40 +475,16 @@ evaluation summaries, plot inputs, and reproduction commands are in
 #### Run a bounded CoSyn control
 
 After setup and a two-step smoke, use a fresh environment for this run. With
-`WORK` and the two capped preparations above, make a path-only copy of the
-QLoRA config and check the counts against its preparation manifests:
+`WORK` and the two capped preparations above, use
+[`prepare_cosyn_control.py`](scripts/prepare_cosyn_control.py) to make a
+path-only copy of the QLoRA config. It checks the 2,048 training and 256
+validation counts and JSONL hashes against their preparation manifests,
+and refuses to overwrite an existing config:
 
 ```bash
-mkdir -p "$WORK/configs" "$WORK/notes" "$WORK/logs"
+mkdir -p "$WORK/notes" "$WORK/logs"
 git rev-parse HEAD > "$WORK/notes/cookbook-commit.txt"
-python - <<'PY'
-import hashlib
-import json
-import os
-from pathlib import Path
-
-import yaml
-
-work = Path(os.environ["WORK"]).resolve()
-config = yaml.safe_load(Path("configs/muse-glimmer-30b-qlora.yaml").read_text())
-for field, cap, split, count in (
-    ("datasets", 2048, "train", 2048),
-    ("test_datasets", 256, "validation", 256),
-):
-    directory = work / f"datasets/cap-{cap}/cosyn-circuit"
-    manifest = json.loads((directory / "manifest.json").read_text())
-    path = directory / f"{split}.jsonl"
-    stats = manifest["splits"][split]
-    if stats["examples"] != count:
-        raise ValueError(f"Unexpected {split} count")
-    if hashlib.sha256(path.read_bytes()).hexdigest() != stats["jsonl_sha256"]:
-        raise ValueError(f"Changed {split} file")
-    config[field][0]["path"] = str(path)
-config["dataset_prepared_path"] = str(work / "datasets/cache/cosyn-qlora")
-config["output_dir"] = str(work / "checkpoints/cosyn-qlora")
-with (work / "configs/cosyn-qlora.yaml").open("x") as output:
-    yaml.safe_dump(config, output, sort_keys=False)
-PY
+python scripts/prepare_cosyn_control.py --work-dir "$WORK"
 
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
   axolotl train "$WORK/configs/cosyn-qlora.yaml" \
